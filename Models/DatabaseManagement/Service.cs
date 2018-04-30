@@ -10,7 +10,7 @@ namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
         public string Name { get; set; }
         [MaxLength(50)]
         [Required]
-        public string IP { get; set; }
+        public string Ip { get; set; }
         [MaxLength(200)]
         [Required]
         public string Hostname { get; set; }

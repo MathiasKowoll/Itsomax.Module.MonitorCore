@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
+﻿namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
 {
     public class SystemListViewModel
     {

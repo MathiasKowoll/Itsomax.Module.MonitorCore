@@ -1,20 +1,18 @@
 ﻿using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
 using Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Itsomax.Module.MonitorCore.Interfaces
 {
     public interface IMonitor
     {
-        bool CreateSystem(CreateSystemViewModel model, string Username);
+        bool CreateSystem(CreateSystemViewModel model, string userName);
         IEnumerable<SystemListViewModel> GetSystemList(string userName);
-        EditSystemViewModel GetSystemForEdit(long Id, string userName);
-        DatabaseSystem GetSystem(long Id, string userName);
-        DatabaseSystem GetSystem(long Id);
+        EditSystemViewModel GetSystemForEdit(long id, string userName);
+        DatabaseSystem GetSystem(long id, string userName);
+        DatabaseSystem GetSystem(long id);
         bool EditSystem(EditSystemViewModel model, string userName);
-        bool DeleteSystem(long Id, string userName);
-        bool DisableEnableSystem(long Id, string userName);
+        bool DeleteSystem(long id, string userName);
+        bool DisableEnableSystem(long id, string userName);
     }
 }

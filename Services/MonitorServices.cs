@@ -63,11 +63,11 @@ namespace Itsomax.Module.MonitorCore.Services
             }
 
         }
-        public EditSystemViewModel GetSystemForEdit(long Id, string userName)
+        public EditSystemViewModel GetSystemForEdit(long id, string userName)
         {
             try
             {
-                var system = _systemRepository.Query().FirstOrDefault(x => x.Id == Id);
+                var system = _systemRepository.Query().FirstOrDefault(x => x.Id == id);
                 var editSystem = new EditSystemViewModel()
                 {
                     Id = system.Id,
@@ -85,11 +85,11 @@ namespace Itsomax.Module.MonitorCore.Services
 
         }
 
-        public DatabaseSystem GetSystem(long Id, string userName)
+        public DatabaseSystem GetSystem(long id, string userName)
         {
             try
             {
-                var system = _systemRepository.Query().FirstOrDefault(x => x.Id == Id);
+                var system = _systemRepository.Query().FirstOrDefault(x => x.Id == id);
                 
                 return system;
             }
@@ -101,9 +101,9 @@ namespace Itsomax.Module.MonitorCore.Services
 
         }
 
-        public DatabaseSystem GetSystem(long Id)
+        public DatabaseSystem GetSystem(long id)
         {
-            return GetSystem(Id, string.Empty);
+            return GetSystem(id, string.Empty);
         }
 
         public bool EditSystem(EditSystemViewModel model, string userName)
@@ -124,11 +124,11 @@ namespace Itsomax.Module.MonitorCore.Services
             }
         }
 
-        public bool DeleteSystem(long Id,string userName)
+        public bool DeleteSystem(long id,string userName)
         {
             try
             {
-                var deleteSystem = GetSystem(Id);
+                var deleteSystem = GetSystem(id);
                 _systemRepository.Remove(deleteSystem);
 				_systemRepository.SaveChangesAsync();
                 return true;
@@ -140,11 +140,11 @@ namespace Itsomax.Module.MonitorCore.Services
             }
         }
 
-        public bool DisableEnableSystem(long Id,string userName)
+        public bool DisableEnableSystem(long id,string userName)
         {
             try
             {
-                var systemEna = GetSystem(Id);
+                var systemEna = GetSystem(id);
                 if(systemEna.Active)
                 {
                     systemEna.Active = false;

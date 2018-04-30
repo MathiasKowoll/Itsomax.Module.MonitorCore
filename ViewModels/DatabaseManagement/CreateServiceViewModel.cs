@@ -11,7 +11,7 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         public string Name { get; set; }
         [MaxLength(50)]
         [Required]
-        public string IP { get; set; }
+        public string Ip { get; set; }
         [MaxLength(200)]
         [Required]
         public string Hostname { get; set; }
@@ -20,6 +20,9 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         [MaxLength(100)]
         [Required]
         public string LoginName { get; set; }
+        [Required]
+        [MaxLength(500)]
+        public  string Description { get; set; }
         [Required]
         [DataType(DataType.Password)]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
