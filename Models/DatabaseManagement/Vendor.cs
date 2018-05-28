@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Itsomax.Data.Infrastructure.Models;
 
 namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
@@ -10,5 +11,7 @@ namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
         public string Name { get; set; }
         [Required]
         public string Description { get; set; }
+
+        public IList<DatabaseSystem> DatabaseSystem { get; set; } = new List<DatabaseSystem>();
     }
 }

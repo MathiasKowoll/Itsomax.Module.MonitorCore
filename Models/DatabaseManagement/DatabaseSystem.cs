@@ -1,4 +1,5 @@
-﻿using Itsomax.Data.Infrastructure.Models;
+﻿using System.Collections.Generic;
+using Itsomax.Data.Infrastructure.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
@@ -17,6 +18,7 @@ namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
         public Vendor Vendor { get; set; }
         public long ConfigurationTypeId { get; set; }
         public ConfigurationType ConfigurationType { get; set; }
+        public IList<Service> Service { get; set; } = new List<Service>();
 
     }
 }
