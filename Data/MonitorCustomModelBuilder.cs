@@ -8,7 +8,7 @@ using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
 
 namespace Itsomax.Module.MonitorCore.Data
 {
-    class MonitorCustomModelBuilder : ICustomModelBuilder
+    public class MonitorCustomModelBuilder : ICustomModelBuilder
     {
         public void Build(ModelBuilder modelBuilder)
         {

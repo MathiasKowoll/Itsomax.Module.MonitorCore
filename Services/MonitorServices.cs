@@ -1,11 +1,17 @@
 ﻿using Itsomax.Module.MonitorCore.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
 using Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement;
 using Itsomax.Data.Infrastructure.Data;
 using Itsomax.Module.Core.Interfaces;
 using System.Linq;
+using System.Resources;
+using System.Threading.Tasks;
+using Itsomax.Module.Core.Extensions;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Itsomax.Module.MonitorCore.Services
 {
@@ -20,7 +26,7 @@ namespace Itsomax.Module.MonitorCore.Services
             _logger = logger;
         }
 
-        public bool CreateSystem(CreateSystemViewModel model, string userName)
+        public async Task<SystemSucceededTask> CreateSystem(CreateSystemViewModel model, string userName)
         {
             try
             {
@@ -32,15 +38,23 @@ namespace Itsomax.Module.MonitorCore.Services
                 };
 
                 _systemRepository.Add(dbSysten);
-				_systemRepository.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
+                await _systemRepository.SaveChangesAsync();
+                return SystemSucceededTask.Success("System {model.Name} created succesfully");
+            }   
+            catch (DbUpdateException ex)
             {
-                _logger.ErrorLog(ex.Message, "Create Database System", ex.InnerException.Message, userName);
-                return false;
-            }
+                if (ex.InnerException.Source.Contains("sql"))
+                {
+                    _logger.ErrorLog(ex.Message, "Create Database System", ex.InnerException.Message, userName);
+                    return SystemSucceededTask.Failed("Could not create system {model.Name}", ex.InnerException.Message,false, true);
 
+                }
+                else
+                {
+                    _logger.ErrorLog(ex.Message, "Create Database System", ex.InnerException.Message, userName);
+                    return SystemSucceededTask.Failed("Could not create system {model.Name}", ex.InnerException.Message,false, true);
+                }
+            }
         }
 
         public IEnumerable<SystemListViewModel> GetSystemList(string userName)

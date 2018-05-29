@@ -13,9 +13,9 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         public string Description { get; set; }
         [Required]
         public bool Active { get; set; }
-        [Required]
-        public IEnumerable<SelectListItem> VendorList { get; set; }
-        [Required]
-        public IEnumerable<SelectListItem> ConfigTypeList { get; set; }
+        //[Required]
+        //public IEnumerable<SelectListItem> VendorList { get; set; }
+        //[Required]
+        //public IEnumerable<SelectListItem> ConfigTypeList { get; set; }
     }
 }
