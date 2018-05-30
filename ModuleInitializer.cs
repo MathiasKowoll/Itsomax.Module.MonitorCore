@@ -15,7 +15,7 @@ namespace Itsomax.Module.MonitorCore
 
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
-			serviceCollection.AddSingleton<IMonitor, MonitorServices>();
+			serviceCollection.AddScoped<IMonitor, MonitorServices>();
         }
     }
 }
