@@ -6,6 +6,13 @@ namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
 {
     public class ConfigurationType : EntityBase
     {
+        public ConfigurationType(){}
+
+        public ConfigurationType(long id)
+        {
+            Id = id;
+        }
+        
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }

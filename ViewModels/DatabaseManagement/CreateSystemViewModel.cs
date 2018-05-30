@@ -1,7 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering;
-
 namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
 {
     public class CreateSystemViewModel
@@ -13,9 +10,9 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         public string Description { get; set; }
         [Required]
         public bool Active { get; set; }
-        //[Required]
-        //public IEnumerable<SelectListItem> VendorList { get; set; }
-        //[Required]
-        //public IEnumerable<SelectListItem> ConfigTypeList { get; set; }
+        [Required]
+        public long VendorId { get; set; }
+        [Required]
+        public long ConfigTypeId { get; set; }
     }
 }

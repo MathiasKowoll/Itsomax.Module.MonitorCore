@@ -1,29 +1,34 @@
 ﻿using Itsomax.Module.MonitorCore.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
 using Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement;
-using Itsomax.Data.Infrastructure.Data;
 using Itsomax.Module.Core.Interfaces;
 using System.Linq;
-using System.Resources;
 using System.Threading.Tasks;
 using Itsomax.Module.Core.Extensions;
+using Itsomax.Module.MonitorCore.Data;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace Itsomax.Module.MonitorCore.Services
 {
     public class MonitorServices : IMonitor
     {
-        private readonly IRepository<DatabaseSystem> _systemRepository;
+        private readonly IDatabaseSystemRepository _systemRepository;
+        private readonly IVendorRepository _vendorRepository;
+        private readonly IServiceRepository _serviceRepository;
+        private readonly IConfigurationTypeRepository _configurationTypeRepository;
         private readonly ILogginToDatabase _logger;
 
-        public MonitorServices(IRepository<DatabaseSystem> systemRepository, ILogginToDatabase logger)
+        public MonitorServices(IDatabaseSystemRepository systemRepository, ILogginToDatabase logger,
+            IVendorRepository vendorRepository,IServiceRepository serviceRepositor
+            ,IConfigurationTypeRepository configurationTypeRepository)
         {
             _systemRepository = systemRepository;
             _logger = logger;
+            _vendorRepository = vendorRepository;
+            _configurationTypeRepository = configurationTypeRepository;
+            _serviceRepository = serviceRepositor;
         }
 
         public async Task<SystemSucceededTask> CreateSystem(CreateSystemViewModel model, string userName)
@@ -34,7 +39,9 @@ namespace Itsomax.Module.MonitorCore.Services
                 {
                     Name = model.Name,
                     Description = model.Description,
-                    Active = model.Active
+                    Active = model.Active,
+                    ConfigurationTypeId = model.ConfigTypeId,
+                    Vendor = _vendorRepository.GetById(model.VendorId)
                 };
 
                 _systemRepository.Add(dbSysten);
@@ -61,14 +68,7 @@ namespace Itsomax.Module.MonitorCore.Services
         {
             try
             {
-                var list = _systemRepository.Query().ToList().Select(x => new SystemListViewModel
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description = x.Description,
-                    Active = x.Active
-                });
-                return list;
+                return _systemRepository.GetSystemListViewModels();
             }
             catch (Exception ex)
             {

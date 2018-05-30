@@ -22,6 +22,8 @@ namespace Itsomax.Module.MonitorCore.Data
             {
                 o.HasOne(x => x.DatabaseSystem).WithMany(x => x.Service).HasForeignKey(x => x.DatabaseSystemId);
             });
+            
+            MonitorSeedData.SeedData(modelBuilder);
         }
     }
 }
