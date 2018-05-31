@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
 {
@@ -16,8 +14,8 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         [Required]
         public bool Active { get; set; }
         [Required]
-        public IEnumerable<SelectListItem> VendorList { get; set; }
+        public long VendorId { get; set; }
         [Required]
-        public IEnumerable<SelectListItem> ConfigTypeList { get; set; }
+        public long ConfigTypeId { get; set; }
     }
 }

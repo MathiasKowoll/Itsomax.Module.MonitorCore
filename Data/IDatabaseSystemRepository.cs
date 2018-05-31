@@ -8,5 +8,6 @@ namespace Itsomax.Module.MonitorCore.Data
     public interface IDatabaseSystemRepository : IRepository<DatabaseSystem>
     {
         IEnumerable<SystemListViewModel> GetSystemListViewModels();
+        EditSystemViewModel GetSystemsEditViewModel(long id);
     }
 }

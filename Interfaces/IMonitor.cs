@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Itsomax.Module.Core.Extensions;
 using Itsomax.Module.Core.ViewModels;
+using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
 
 namespace Itsomax.Module.MonitorCore.Interfaces
 {
@@ -16,5 +17,6 @@ namespace Itsomax.Module.MonitorCore.Interfaces
         bool DisableEnableSystem(long id, string userName);
         IList<GenericSelectList> ConfigurationTypeSelectList(long id);
         IList<GenericSelectList> VendorSelectList(long id);
+        DatabaseSystem GetDatabaseSystemById(long id, string userName);
     }
 }

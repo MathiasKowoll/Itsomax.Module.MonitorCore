@@ -29,5 +29,24 @@ namespace Itsomax.Module.MonitorCore.Data
                     VendorName = v.Name
                 };
         }
+
+        public EditSystemViewModel GetSystemsEditViewModel(long id)
+        {
+            return 
+                (from dbs in Context.Set<DatabaseSystem>()
+                join v in Context.Set<Vendor>() on dbs.VendorId equals v.Id
+                join ct in Context.Set<ConfigurationType>() on dbs.ConfigurationTypeId equals ct.Id
+                where dbs.Id == id
+                select new EditSystemViewModel
+                {
+                    
+                    Id = dbs.Id,
+                    Active = dbs.Active,
+                    ConfigTypeId = ct.Id,
+                    Description = dbs.Description,
+                    Name = dbs.Name,
+                    VendorId = v.Id
+                }).SingleOrDefault();
+        }
     }
 }

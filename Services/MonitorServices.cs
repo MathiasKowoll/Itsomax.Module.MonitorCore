@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Itsomax.Module.Core.Extensions;
 using Itsomax.Module.Core.ViewModels;
 using Itsomax.Module.MonitorCore.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Itsomax.Module.MonitorCore.Services
 {
@@ -64,7 +63,7 @@ namespace Itsomax.Module.MonitorCore.Services
                     string.Empty, userName);
                 return SystemSucceededTask.Success("Database System "+model.Name +" created succesfully");
             }   
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 if (ex.InnerException.Source.Contains("sql"))
                 {
@@ -78,15 +77,34 @@ namespace Itsomax.Module.MonitorCore.Services
             }
         }
 
+        public DatabaseSystem GetDatabaseSystemById(long id,string userName)
+        {
+            try
+            {
+                var dbs = _systemRepository.GetById(id);
+                _logger.InformationLog("Get Database System by Id Successfully", "Get Database System by Id",string.Empty, userName);
+                return dbs;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex.Message, "Get Database System by Id", ex.InnerException.Message, userName);
+                throw;
+            }
+        }
+
         public IEnumerable<SystemListViewModel> GetSystemList(string userName)
         {
             try
             {
-                return _systemRepository.GetSystemListViewModels();
+                var dbs = _systemRepository.GetSystemListViewModels();
+                _logger.InformationLog("Get Database System selectlist successfully", "Get Database System selectlist",
+                    string.Empty, userName);
+                return dbs;
             }
             catch (Exception ex)
             {
-                _logger.ErrorLog(ex.Message, "Get System List", ex.InnerException.Message, userName);
+                _logger.ErrorLog(ex.Message, "Get System List Selectlist", ex.InnerException.Message, userName);
                 return null;
             }
 
@@ -116,23 +134,18 @@ namespace Itsomax.Module.MonitorCore.Services
             return configList;
         }
         
+        
         public EditSystemViewModel GetSystemForEdit(long id, string userName)
         {
             try
             {
-                var system = _systemRepository.GetById(id);
-                var editSystem = new EditSystemViewModel()
-                {
-                    Id = system.Id,
-                    Name = system.Name,
-                    Description = system.Description,
-                    Active = system.Active
-                };
-                return editSystem;
+                var dbs = _systemRepository.GetSystemsEditViewModel(id);
+                _logger.InformationLog("Get Database System: "+dbs.Name,"Get Database System for Edit",string.Empty,userName);
+                return dbs;
             }
             catch (Exception ex)
             {
-                _logger.ErrorLog(ex.Message, "Get System", ex.InnerException.Message);
+                _logger.ErrorLog(ex.Message, "Get System", ex.InnerException.Message,userName);
                 return null;
             }
 
@@ -141,14 +154,25 @@ namespace Itsomax.Module.MonitorCore.Services
         public async Task<SystemSucceededTask> EditSystem(EditSystemViewModel model, string userName)
         {
             var oldSystem = _systemRepository.GetById(model.Id);
+
+            if (oldSystem == null)
+            {
+                _logger.ErrorLog("Edit System: " + model.Name + " does not exists", "Edit Database System",
+                    "Database System " + model.Name + "does not exist", userName);
+                return SystemSucceededTask.Failed("Edit " + model.Name + " unsuccessful",
+                    "Database System " + model.Name + "does not exist", false, true);
+            }
             
             try
             {
                 oldSystem.Name = model.Name;
                 oldSystem.Description = model.Description;
                 oldSystem.Active = model.Active;
+                oldSystem.Vendor = _vendorRepository.GetById(model.VendorId);
+                oldSystem.ConfigurationType = _configurationTypeRepository.GetById(model.ConfigTypeId);
                 await _systemRepository.SaveChangesAsync();
-                return SystemSucceededTask.Success("System {oldSystem.Name} edited succesfully");
+                _logger.InformationLog("Edit Database System: "+model.Name, "Edit Database System", string.Empty, userName);
+                return SystemSucceededTask.Success("System "+model.Name+" edited succesfully");
             }
             catch (Exception ex)
             {
