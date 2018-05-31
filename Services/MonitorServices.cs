@@ -54,18 +54,21 @@ namespace Itsomax.Module.MonitorCore.Services
                     Name = model.Name,
                     Description = model.Description,
                     Active = model.Active,
-                    //ConfigurationType = _configurationTypeRepository.GetById(model.ConfigTypeId),
+                    ConfigurationType = _configurationTypeRepository.GetById(model.ConfigTypeId),
                     Vendor = _vendorRepository.GetById(model.VendorId)
                 };
 
                 _systemRepository.Add(dbSysten);
                 await _systemRepository.SaveChangesAsync();
-                return SystemSucceededTask.Success("System "+model.Name +" created succesfully");
+                _logger.InformationLog("Create Database System " + model.Name + " successfully", "Create Database System",
+                    string.Empty, userName);
+                return SystemSucceededTask.Success("Database System "+model.Name +" created succesfully");
             }   
             catch (DbUpdateException ex)
             {
                 if (ex.InnerException.Source.Contains("sql"))
                 {
+                    _logger.ErrorLog(ex.Message, "Create Database System", ex.InnerException.Message, userName);
                     return SystemSucceededTask.Failed("Could not create system "+model.Name, ex.InnerException.Message,false, true);
 
                 }
