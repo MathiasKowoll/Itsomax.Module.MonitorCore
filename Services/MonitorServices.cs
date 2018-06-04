@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Itsomax.Module.Core.Extensions;
 using Itsomax.Module.Core.ViewModels;
 using Itsomax.Module.MonitorCore.Data;
-
 namespace Itsomax.Module.MonitorCore.Services
 {
     public class MonitorServices : IMonitor
@@ -133,6 +132,18 @@ namespace Itsomax.Module.MonitorCore.Services
                 select new GenericSelectList {Id = item.Id, Name = item.Name, Selected = selected});
             return configList;
         }
+
+        public IList<GenericSelectList> DatabaseSystemList(long id)
+        {
+            var getSystemList = _systemRepository.GetAll();
+            var configList = new List<GenericSelectList>();
+            if(_systemRepository.GetById(id) == null)
+                configList.Add(new GenericSelectList {Id = 0,Name = "Select Database System",Selected = true});
+            configList.AddRange(from item in getSystemList
+                let selected = _systemRepository.GetById(id) != null
+                select new GenericSelectList {Id = item.Id,Name = item.Name, Selected = selected});
+            return configList;
+        }
         
         
         public EditSystemViewModel GetSystemForEdit(long id, string userName)
@@ -190,11 +201,15 @@ namespace Itsomax.Module.MonitorCore.Services
 
         public bool DeleteSystem(long id,string userName)
         {
-            var deleteSystem = _systemRepository.GetById(id);
+            
             try
             {
+                var deleteSystem = _systemRepository.GetById(id);
                 _systemRepository.Remove(deleteSystem);
 				_systemRepository.SaveChangesAsync();
+                _logger.InformationLog("Disable System: " + deleteSystem.Name + " Successfully",
+                    "Disable System", string.Empty, userName);
+                
                 return true;
             }
             catch (Exception ex)
@@ -213,12 +228,16 @@ namespace Itsomax.Module.MonitorCore.Services
                 {
                     systemEna.Active = false;
 					_systemRepository.SaveChangesAsync();
+                    _logger.InformationLog("Disable System: " + systemEna.Name + " Successfully",
+                        "Disable System", string.Empty, userName);
                     return true;
                 }
                 else
                 {
                     systemEna.Active = true;
 					_systemRepository.SaveChangesAsync();
+                    _logger.InformationLog("Enable System: " + systemEna.Name + " Successfully",
+                        "Enable System", string.Empty, userName);
                     return true;
                 }
             }
@@ -228,5 +247,137 @@ namespace Itsomax.Module.MonitorCore.Services
                 return false;
             }
         }
+
+        public IEnumerable<Service> GetServicesList(string userName)
+        {
+            try
+            {
+                var servicesList = _serviceRepository.GetAll();
+                _logger.InformationLog("Get Services List","Get Services List",string.Empty,userName);
+                return servicesList;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex.Message,"Get Services List",ex.InnerException.Message,userName);
+                return null;
+            }
+            
+        }
+
+        public Service GetServiceByName(long id, string userName)
+        {
+            try
+            {
+                var service = _serviceRepository.GetById(id);
+                if (service == null)
+                {
+                    _logger.ErrorLog("Service not found","Service not found",string.Empty,userName);
+                    return null;
+                }
+                _logger.InformationLog("Service found "+service.Name,"Get Service",string.Empty,userName);
+                return service;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex.Message,"Get Service",ex.InnerException.Message);
+                return null;
+            }
+        }
+
+        public async Task<SystemSucceededTask> CreateService(CreateServiceViewModel model, string userName)
+        {
+            var newService = new Service
+            {
+                Active = model.Active,
+                DatabaseSystem = _systemRepository.GetById(model.DatabaseSystemId),
+                Hostname = model.Hostname,
+                Ip = model.Ip,
+                LoginName = model.LoginName,
+                Name = model.Name,
+                Named = model.Named,
+                LoginPassword = _serviceRepository.SetPassword(model.LoginPassword),
+                CreatedOn = DateTimeOffset.Now
+            };
+            _serviceRepository.Add(newService);
+            
+            try
+            {
+                await _serviceRepository.SaveChangesAsync();
+                _logger.InformationLog("Service: " + model.Name + " created successfully", "Create Service",
+                    string.Empty, userName);
+                return SystemSucceededTask.Success("Service: " + model.Name + " created successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.InformationLog(ex.Message, "Create Service",ex.InnerException.Message, userName);
+                return SystemSucceededTask.Failed("Service: " + model.Name + " created unsuccessfully",
+                    ex.InnerException.Message, true, false);
+            }
+        }
+        
+        public async Task<SystemSucceededTask> EditService(EditServiceViewModel model, string userName)
+        {
+            var oldService = _serviceRepository.GetById(model.Id);
+            if (oldService == null)
+            {
+                _logger.InformationLog("Service not found", "Edit Service",string.Empty, userName);
+                return SystemSucceededTask.Failed("Service: " + model.Name + " edited successful",
+                    string.Empty, false, true);
+            }
+
+            oldService.Active = model.Active;
+            oldService.DatabaseSystem = _systemRepository.GetById(model.DatabaseSystemId);
+            oldService.Hostname = model.Hostname;
+            oldService.Ip = model.Ip;
+            oldService.LoginName = model.LoginName;
+            oldService.Name = model.Name;
+            oldService.Named = model.Named;
+            oldService.LoginPassword = _serviceRepository.SetPassword(model.LoginPassword);
+            oldService.UpdatedOn = DateTimeOffset.Now;
+            
+            try
+            {
+                await _serviceRepository.SaveChangesAsync();
+                _logger.InformationLog("Service: " + model.Name + " edited successfully", "Edit Service",
+                    string.Empty, userName);
+                return SystemSucceededTask.Success("Service: " + model.Name + " edited successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.InformationLog(ex.Message, "Edit Service",ex.InnerException.Message, userName);
+                return SystemSucceededTask.Failed("Service: " + model.Name + " edited successful",
+                    ex.InnerException.Message, true, false);
+            }
+        }
+        
+        public bool DisableEnableService(long id,string userName)
+        {
+            try
+            {
+                var serviceEna = _serviceRepository.GetById(id);
+                if(serviceEna.Active)
+                {
+                    serviceEna.Active = false;
+                    _serviceRepository.SaveChangesAsync();
+                    _logger.InformationLog("Disable Service: " + serviceEna.Name + " Successfully",
+                        "Disable Service", string.Empty, userName);
+                    return true;
+                }
+                else
+                {
+                    serviceEna.Active = true;
+                    _serviceRepository.SaveChangesAsync();
+                    _logger.InformationLog("Enable Service: " + serviceEna.Name + " Successfully",
+                        "Enable Service", string.Empty, userName);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex.Message, "Enable/Disable Service", ex.InnerException.Message, userName);
+                return false;
+            }
+        }
+
     }
 }

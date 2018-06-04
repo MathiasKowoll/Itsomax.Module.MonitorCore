@@ -1,10 +1,15 @@
-﻿using Itsomax.Data.Infrastructure.Models;
+﻿using System;
+using Itsomax.Data.Infrastructure.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
 {
     public class Service : EntityBase
     {
+        public Service()
+        {
+            UpdatedOn = DateTimeOffset.Now;
+        }
         [MaxLength(100)]
         [Required]
         public string Name { get; set; }
@@ -26,5 +31,9 @@ namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
         [Required]
         public long DatabaseSystemId { get; set; }
         public DatabaseSystem DatabaseSystem { get; set; }
+        [Required]
+        public DateTimeOffset UpdatedOn { get; set; }
+        [Required]
+        public DateTimeOffset CreatedOn { get; set; }
     }
 }
