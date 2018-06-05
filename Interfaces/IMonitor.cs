@@ -19,7 +19,7 @@ namespace Itsomax.Module.MonitorCore.Interfaces
         IList<GenericSelectList> VendorSelectList(long id);
         IList<GenericSelectList> DatabaseSystemList(long id);
         DatabaseSystem GetDatabaseSystemById(long id, string userName);
-        IEnumerable<Service> GetServicesList(string userName);
+        IEnumerable<ServiceListViewModel> GetServicesList(string userName);
         Service GetServiceByName(long id, string userName);
         Task<SystemSucceededTask> CreateService(CreateServiceViewModel model, string userName);
         Task<SystemSucceededTask> EditService(EditServiceViewModel model, string userName);

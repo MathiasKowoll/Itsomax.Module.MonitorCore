@@ -53,7 +53,8 @@ namespace Itsomax.Module.MonitorCore.Services
                     Description = model.Description,
                     Active = model.Active,
                     ConfigurationType = _configurationTypeRepository.GetById(model.ConfigTypeId),
-                    Vendor = _vendorRepository.GetById(model.VendorId)
+                    Vendor = _vendorRepository.GetById(model.VendorId),
+                    UpdatedOn = DateTimeOffset.Now
                 };
 
                 _systemRepository.Add(dbSysten);
@@ -181,6 +182,8 @@ namespace Itsomax.Module.MonitorCore.Services
                 oldSystem.Active = model.Active;
                 oldSystem.Vendor = _vendorRepository.GetById(model.VendorId);
                 oldSystem.ConfigurationType = _configurationTypeRepository.GetById(model.ConfigTypeId);
+                oldSystem.UpdatedOn = DateTimeOffset.Now;
+                
                 await _systemRepository.SaveChangesAsync();
                 _logger.InformationLog("Edit Database System: "+model.Name, "Edit Database System", string.Empty, userName);
                 return SystemSucceededTask.Success("System "+model.Name+" edited succesfully");
@@ -248,11 +251,11 @@ namespace Itsomax.Module.MonitorCore.Services
             }
         }
 
-        public IEnumerable<Service> GetServicesList(string userName)
+        public IEnumerable<ServiceListViewModel> GetServicesList(string userName)
         {
             try
             {
-                var servicesList = _serviceRepository.GetAll();
+                var servicesList = _serviceRepository.GetServicesList();
                 _logger.InformationLog("Get Services List","Get Services List",string.Empty,userName);
                 return servicesList;
             }

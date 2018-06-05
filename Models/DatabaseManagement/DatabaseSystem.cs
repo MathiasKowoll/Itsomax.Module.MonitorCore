@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Itsomax.Data.Infrastructure.Models;
 using System.ComponentModel.DataAnnotations;
 
@@ -6,6 +7,10 @@ namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
 {
     public class DatabaseSystem : EntityBase
     {
+        public DatabaseSystem()
+        {
+            UpdatedOn = DateTimeOffset.Now;
+        }
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
@@ -19,6 +24,8 @@ namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
         public long ConfigurationTypeId { get; set; }
         public ConfigurationType ConfigurationType { get; set; }
         public IList<Service> Service { get; set; } = new List<Service>();
+        public DateTimeOffset CreatedOn { get; set; }
+        public DateTimeOffset UpdatedOn { get; set; }
 
     }
 }
