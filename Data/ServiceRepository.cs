@@ -4,7 +4,6 @@ using System.Linq;
 using Itsomax.Module.Core.Data;
 using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
 using Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement;
-using Microsoft.EntityFrameworkCore;
 
 namespace Itsomax.Module.MonitorCore.Data
 {
@@ -15,45 +14,6 @@ namespace Itsomax.Module.MonitorCore.Data
         public Service GetServiceByName(string name)
         {
             return Context.Set<Service>().FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
-        }
-
-        public byte[] SetPassword(string password)
-        {
-            byte[] setPass = null;
-            var query = "select * from \"MonitorCore\".\"SetPassword\"('" + password + "')";
-            using (var command = Context.Database.GetDbConnection().CreateCommand())
-            {
-                command.CommandText = query;
-                Context.Database.OpenConnection();
-                var result = command.ExecuteReader();
-                while (result.Read())
-                {
-                    setPass = (byte[])result[0];
-                }
-                Context.Database.CloseConnection();
-            }
-            
-            return setPass;
-        }
-
-        public string GetPassword(byte[] password)
-        {
-            string stringPassword = null;
-            var query = "select * from \"MonitorCore\".\"GetPassword\"('"+password+"')";
-            using (var command = Context.Database.GetDbConnection().CreateCommand())
-            {
-                command.CommandText = query;
-                Context.Database.OpenConnection();
-                var result = command.ExecuteReader();
-                while (result.Read())
-                {
-                    stringPassword = (string)result[0];
-                }
-                Context.Database.CloseConnection();
-            }
-
-            return stringPassword;
-
         }
 
         public IEnumerable<ServiceListViewModel> GetServicesList()
@@ -70,6 +30,27 @@ namespace Itsomax.Module.MonitorCore.Data
                     Active = s.Active,
                     UpdatedOn = s.UpdatedOn.ToString("yyyy/MM/dd HH:mm:ss zz")
                 };
+        }
+
+        public EditServiceViewModel GetServiceForEdit(long id)
+        {
+            return 
+                (from s in Context.Set<Service>()
+                where s.Id == id
+                select new EditServiceViewModel
+                {
+                    Id = s.Id,
+                    DatabaseSystemId = s.DatabaseSystemId,
+                    Active = s.Active,
+                    Hostname = s.Hostname,
+                    Ip = s.Ip,
+                    LoginName = s.LoginName,
+                    LoginPassword = "ChangeMe".ToUpper(),
+                    Name = s.Name,
+                    Named = s.Named
+                }).FirstOrDefault();
+
+
         }
 
     }

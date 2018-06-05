@@ -48,5 +48,6 @@ namespace Itsomax.Module.MonitorCore.Data
                     VendorId = v.Id
                 }).SingleOrDefault();
         }
+
     }
 }

@@ -14,14 +14,16 @@ namespace Itsomax.Module.MonitorCore.Interfaces
         EditSystemViewModel GetSystemForEdit(long id, string userName);
         Task<SystemSucceededTask> EditSystem(EditSystemViewModel model, string userName);
         bool DeleteSystem(long id, string userName);
-        bool DisableEnableSystem(long id, string userName);
+        Task<bool> DisableEnableSystem(long id, string userName);
         IList<GenericSelectList> ConfigurationTypeSelectList(long id);
         IList<GenericSelectList> VendorSelectList(long id);
         IList<GenericSelectList> DatabaseSystemList(long id);
+        IList<GenericSelectList> GetConfigurationByVendor(long vendorId);
         DatabaseSystem GetDatabaseSystemById(long id, string userName);
         IEnumerable<ServiceListViewModel> GetServicesList(string userName);
         Service GetServiceByName(long id, string userName);
         Task<SystemSucceededTask> CreateService(CreateServiceViewModel model, string userName);
         Task<SystemSucceededTask> EditService(EditServiceViewModel model, string userName);
+        EditServiceViewModel GetServiceToEdit(long id, string userName);
     }
 }

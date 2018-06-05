@@ -6,6 +6,7 @@ using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
 using Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement;
 using Itsomax.Module.Core.Interfaces;
 using System.Threading.Tasks;
+using Itsomax.Module.Core.Data;
 using Itsomax.Module.Core.Extensions;
 using Itsomax.Module.Core.ViewModels;
 using Itsomax.Module.MonitorCore.Data;
@@ -18,16 +19,18 @@ namespace Itsomax.Module.MonitorCore.Services
         private readonly IServiceRepository _serviceRepository;
         private readonly IConfigurationTypeRepository _configurationTypeRepository;
         private readonly ILogginToDatabase _logger;
+        private readonly ICustomRepositoryFunctions _customRepository;
 
         public MonitorServices(IDatabaseSystemRepository systemRepository, ILogginToDatabase logger,
             IVendorRepository vendorRepository,IServiceRepository serviceRepositor
-            ,IConfigurationTypeRepository configurationTypeRepository)
+            ,IConfigurationTypeRepository configurationTypeRepository,ICustomRepositoryFunctions customRepository)
         {
             _systemRepository = systemRepository;
             _logger = logger;
             _vendorRepository = vendorRepository;
             _configurationTypeRepository = configurationTypeRepository;
             _serviceRepository = serviceRepositor;
+            _customRepository = customRepository;
         }
 
         public async Task<SystemSucceededTask> CreateSystem(CreateSystemViewModel model, string userName)
@@ -53,8 +56,7 @@ namespace Itsomax.Module.MonitorCore.Services
                     Description = model.Description,
                     Active = model.Active,
                     ConfigurationType = _configurationTypeRepository.GetById(model.ConfigTypeId),
-                    Vendor = _vendorRepository.GetById(model.VendorId),
-                    UpdatedOn = DateTimeOffset.Now
+                    Vendor = _vendorRepository.GetById(model.VendorId)
                 };
 
                 _systemRepository.Add(dbSysten);
@@ -145,6 +147,11 @@ namespace Itsomax.Module.MonitorCore.Services
                 select new GenericSelectList {Id = item.Id,Name = item.Name, Selected = selected});
             return configList;
         }
+
+        public IList<GenericSelectList> GetConfigurationByVendor(long vendorId)
+        {
+            return _configurationTypeRepository.GetConfigurationForVendor(vendorId);
+        }
         
         
         public EditSystemViewModel GetSystemForEdit(long id, string userName)
@@ -222,7 +229,7 @@ namespace Itsomax.Module.MonitorCore.Services
             }
         }
 
-        public bool DisableEnableSystem(long id,string userName)
+        public async Task<bool> DisableEnableSystem(long id,string userName)
         {
             try
             {
@@ -230,19 +237,17 @@ namespace Itsomax.Module.MonitorCore.Services
                 if(systemEna.Active)
                 {
                     systemEna.Active = false;
-					_systemRepository.SaveChangesAsync();
+					await _systemRepository.SaveChangesAsync();
                     _logger.InformationLog("Disable System: " + systemEna.Name + " Successfully",
                         "Disable System", string.Empty, userName);
                     return true;
                 }
-                else
-                {
-                    systemEna.Active = true;
-					_systemRepository.SaveChangesAsync();
-                    _logger.InformationLog("Enable System: " + systemEna.Name + " Successfully",
-                        "Enable System", string.Empty, userName);
-                    return true;
-                }
+
+                systemEna.Active = true;
+                await _systemRepository.SaveChangesAsync();
+                _logger.InformationLog("Enable System: " + systemEna.Name + " Successfully",
+                    "Enable System", string.Empty, userName);
+                return true;
             }
             catch (Exception ex)
             {
@@ -298,8 +303,7 @@ namespace Itsomax.Module.MonitorCore.Services
                 LoginName = model.LoginName,
                 Name = model.Name,
                 Named = model.Named,
-                LoginPassword = _serviceRepository.SetPassword(model.LoginPassword),
-                CreatedOn = DateTimeOffset.Now
+                LoginPassword = _customRepository.SetEncryption(model.LoginPassword)
             };
             _serviceRepository.Add(newService);
             
@@ -316,6 +320,24 @@ namespace Itsomax.Module.MonitorCore.Services
                 return SystemSucceededTask.Failed("Service: " + model.Name + " created unsuccessfully",
                     ex.InnerException.Message, true, false);
             }
+        }
+
+        public EditServiceViewModel GetServiceToEdit(long id,string userName)
+        {
+            try
+            {
+                var service = _serviceRepository.GetServiceForEdit(id);
+                if (service != null) return service;
+                _logger.ErrorLog("Service not found","Edit Service",string.Empty,userName);
+                return null;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.InformationLog(ex.Message, "Edit Service",ex.InnerException.Message, userName);
+                return null;
+            }
+            
         }
         
         public async Task<SystemSucceededTask> EditService(EditServiceViewModel model, string userName)
@@ -335,7 +357,11 @@ namespace Itsomax.Module.MonitorCore.Services
             oldService.LoginName = model.LoginName;
             oldService.Name = model.Name;
             oldService.Named = model.Named;
-            oldService.LoginPassword = _serviceRepository.SetPassword(model.LoginPassword);
+            if (model.LoginPassword == "ChangeMe".ToUpper())
+            {
+                oldService.LoginPassword = oldService.LoginPassword;
+            }
+            oldService.LoginPassword = _customRepository.SetEncryption(model.LoginPassword);
             oldService.UpdatedOn = DateTimeOffset.Now;
             
             try

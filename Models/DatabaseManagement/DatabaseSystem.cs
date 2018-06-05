@@ -10,6 +10,7 @@ namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
         public DatabaseSystem()
         {
             UpdatedOn = DateTimeOffset.Now;
+            CreatedOn = DateTimeOffset.Now;
         }
         [Required]
         [MaxLength(100)]
@@ -24,7 +25,7 @@ namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
         public long ConfigurationTypeId { get; set; }
         public ConfigurationType ConfigurationType { get; set; }
         public IList<Service> Service { get; set; } = new List<Service>();
-        public DateTimeOffset CreatedOn { get; set; }
+        public DateTimeOffset CreatedOn { get; }
         public DateTimeOffset UpdatedOn { get; set; }
 
     }

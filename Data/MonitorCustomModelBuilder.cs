@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 //using Microsoft.EntityFrameworkCore.Metadata;
 using Itsomax.Data.Infrastructure.Data;
+using Itsomax.Module.MonitorCore.Models;
 using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
 
 //using Itsomax.Module.MonitorCore.Models;
@@ -21,6 +22,21 @@ namespace Itsomax.Module.MonitorCore.Data
             modelBuilder.Entity<Service>(o =>
             {
                 o.HasOne(x => x.DatabaseSystem).WithMany(x => x.Service).HasForeignKey(x => x.DatabaseSystemId);
+            });
+
+            modelBuilder.Entity<Instance>(o =>
+            {
+                o.HasOne(x => x.Service).WithMany(x => x.Instance).HasForeignKey(x => x.ServiceId);
+            });
+
+            modelBuilder.Entity<VendorConfiguration>(o =>
+            {
+                o.HasOne(x => x.ConfigurationType).WithMany(x => x.VendorConfiguration)
+                    .HasForeignKey(x => x.ConfigurationTypeId);
+                o.HasOne(x => x.Vendor).WithMany(x => x.VendorConfiguration).HasForeignKey(x => x.VendorId);
+                o.ToTable("VendorConfiguration", "MonitorCore");
+                o.HasKey(x => new {x.ConfigurationTypeId, x.VendorId});
+
             });
             
             MonitorSeedData.SeedData(modelBuilder);

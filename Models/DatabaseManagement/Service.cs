@@ -1,39 +1,13 @@
-﻿using System;
-using Itsomax.Data.Infrastructure.Models;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
 {
-    public class Service : EntityBase
+    public class Service : ServiceInstance
     {
-        public Service()
-        {
-            UpdatedOn = DateTimeOffset.Now;
-        }
-        [MaxLength(100)]
-        [Required]
-        public string Name { get; set; }
-        [MaxLength(50)]
-        [Required]
-        public string Ip { get; set; }
-        [MaxLength(200)]
-        [Required]
-        public string Hostname { get; set; }
-        [MaxLength(100)]
-        public string Named { get; set; }
-        [MaxLength(100)]
-        [Required]
-        public string LoginName { get; set; }
-        [Required]
-        public byte[] LoginPassword { get; set; }
-        [Required]
-        public bool Active { get; set; }
         [Required]
         public long DatabaseSystemId { get; set; }
         public DatabaseSystem DatabaseSystem { get; set; }
-        [Required]
-        public DateTimeOffset UpdatedOn { get; set; }
-        [Required]
-        public DateTimeOffset CreatedOn { get; set; }
+        public IList<Instance> Instance { get; set; } = new List<Instance>();
     }
 }

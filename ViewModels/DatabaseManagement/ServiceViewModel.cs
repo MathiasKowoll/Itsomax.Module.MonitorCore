@@ -19,14 +19,12 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         [Required]
         public string LoginName { get; set; }
         [Required]
-        [MaxLength(500)]
-        public  string Description { get; set; }
-        [Required]
         [DataType(DataType.Password)]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         public string LoginPassword { get; set; }
         [Required]
         public bool Active { get; set; }
+        [Required]
         public long DatabaseSystemId { get; set; }
     }
 
@@ -49,14 +47,12 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         [Required]
         public string LoginName { get; set; }
         [Required]
-        [MaxLength(500)]
-        public  string Description { get; set; }
-        [Required]
         [DataType(DataType.Password)]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         public string LoginPassword { get; set; }
         [Required]
         public bool Active { get; set; }
+        [Required]
         public long DatabaseSystemId { get; set; }
     }
     

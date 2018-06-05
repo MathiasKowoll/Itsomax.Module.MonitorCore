@@ -7,8 +7,7 @@ namespace Itsomax.Module.MonitorCore.Data
 {
     public interface IServiceRepository : IRepository<Service>
     {
-        byte[] SetPassword(string password);
-        string GetPassword(byte[] password);
         IEnumerable<ServiceListViewModel> GetServicesList();
+        EditServiceViewModel GetServiceForEdit(long id);
     }
 }
