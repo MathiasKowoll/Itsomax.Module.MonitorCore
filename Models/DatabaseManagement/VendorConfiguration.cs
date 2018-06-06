@@ -1,6 +1,4 @@
-﻿using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
-
-namespace Itsomax.Module.MonitorCore.Models
+﻿namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
 {
     public class VendorConfiguration
     {

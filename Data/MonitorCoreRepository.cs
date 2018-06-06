@@ -4,7 +4,6 @@ using System.Linq;
 using Itsomax.Module.Core.Data;
 using Itsomax.Module.Core.Models;
 using Itsomax.Module.Core.ViewModels;
-using Itsomax.Module.MonitorCore.Models;
 using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
 using Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement;
 
@@ -16,7 +15,8 @@ namespace Itsomax.Module.MonitorCore.Data
         
         public ConfigurationType GetConfigurationTypeByName(string name)
         {
-            return Context.Set<ConfigurationType>().FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            return Context.Set<ConfigurationType>()
+                .FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
         }
         
         
@@ -30,7 +30,6 @@ namespace Itsomax.Module.MonitorCore.Data
                         Id = c.Id,
                         Name = c.Name
                     }).ToList();
-            //list.Add(new GenericSelectList {Id = 0,Name = "Select Configuration",Selected = true});
             return list;
         }
         
@@ -72,7 +71,8 @@ namespace Itsomax.Module.MonitorCore.Data
         
         public Service GetServiceByName(string name)
         {
-            return Context.Set<Service>().FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            return Context.Set<Service>()
+                .FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public IEnumerable<ServiceListViewModel> GetServicesList()
@@ -114,7 +114,8 @@ namespace Itsomax.Module.MonitorCore.Data
         
         public Vendor GetVendorByName(string name)
         {
-            return Context.Set<Vendor>().FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            return Context.Set<Vendor>()
+                .FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
         }
 
     }

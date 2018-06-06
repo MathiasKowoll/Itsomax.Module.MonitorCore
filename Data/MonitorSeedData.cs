@@ -1,5 +1,4 @@
-﻿using Itsomax.Module.MonitorCore.Models;
-using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
+﻿using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
 using Microsoft.EntityFrameworkCore;
 
 namespace Itsomax.Module.MonitorCore.Data

@@ -41,14 +41,16 @@ namespace Itsomax.Module.MonitorCore.Services
         {
             if (_configurationTypeRepository.GetById(model.ConfigTypeId) == null)
             {
-                _logger.ErrorLog("Could not create system "+model.Name, "Create Database System", string.Empty, userName);
-                return SystemSucceededTask.Failed("Could not create system "+model.Name+", Please select a configuration",
-                    string.Empty, false, true);
+                _logger.ErrorLog("Could not create system " + model.Name, "Create Database System", string.Empty,
+                    userName);
+                return SystemSucceededTask.Failed("Could not create system "+model.Name+"" +
+                                                  ", Please select a configuration",string.Empty, false, true);
             }
 
             if (_vendorRepository.GetById(model.VendorId) == null)
             {
-                _logger.ErrorLog("Could not create system "+model.Name, "Create Database System", string.Empty, userName);
+                _logger.ErrorLog("Could not create system " + model.Name, "Create Database System", string.Empty,
+                    userName);
                 return SystemSucceededTask.Failed("Could not create system {model.Name}, Please select a configuration",
                     string.Empty, false, true);
             }
@@ -74,12 +76,14 @@ namespace Itsomax.Module.MonitorCore.Services
                 if (ex.InnerException.Source.Contains("sql"))
                 {
                     _logger.ErrorLog(ex.Message, "Create Database System", ex.InnerException.Message, userName);
-                    return SystemSucceededTask.Failed("Could not create system "+model.Name, ex.InnerException.Message,false, true);
+                    return SystemSucceededTask.Failed("Could not create system " + model.Name,
+                        ex.InnerException.Message, false, true);
 
                 }
 
                 _logger.ErrorLog(ex.Message, "Create Database System", ex.InnerException.Message, userName);
-                return SystemSucceededTask.Failed("Could not create system "+model.Name, ex.InnerException.Message,false, true);
+                return SystemSucceededTask.Failed("Could not create system " + model.Name, ex.InnerException.Message,
+                    false, true);
             }
         }
 
@@ -88,7 +92,8 @@ namespace Itsomax.Module.MonitorCore.Services
             try
             {
                 var dbs = _systemRepository.GetById(id);
-                _logger.InformationLog("Get Database System by Id Successfully", "Get Database System by Id",string.Empty, userName);
+                _logger.InformationLog("Get Database System by Id Successfully", "Get Database System by Id",
+                    string.Empty, userName);
                 return dbs;
 
             }
@@ -163,7 +168,8 @@ namespace Itsomax.Module.MonitorCore.Services
             try
             {
                 var dbs = _monitorCore.GetSystemsEditViewModel(id);
-                _logger.InformationLog("Get Database System: "+dbs.Name,"Get Database System for Edit",string.Empty,userName);
+                _logger.InformationLog("Get Database System: " + dbs.Name, "Get Database System for Edit", string.Empty,
+                    userName);
                 return dbs;
             }
             catch (Exception ex)
@@ -196,7 +202,8 @@ namespace Itsomax.Module.MonitorCore.Services
                 oldSystem.UpdatedOn = DateTimeOffset.Now;
                 
                 await _systemRepository.SaveChangesAsync();
-                _logger.InformationLog("Edit Database System: "+model.Name, "Edit Database System", string.Empty, userName);
+                _logger.InformationLog("Edit Database System: " + model.Name, "Edit Database System", string.Empty,
+                    userName);
                 return SystemSucceededTask.Success("System "+model.Name+" edited succesfully");
             }
             catch (Exception ex)
@@ -204,12 +211,14 @@ namespace Itsomax.Module.MonitorCore.Services
                 if (ex.InnerException.Source.Contains("sql"))
                 {
                     _logger.ErrorLog(ex.Message, "Edit Database System", ex.InnerException.Message, userName);
-                    return SystemSucceededTask.Failed("Edit {oldSystem.Name} unsuccessful", ex.InnerException.Message,false, true);
+                    return SystemSucceededTask.Failed("Edit {oldSystem.Name} unsuccessful", ex.InnerException.Message,
+                        false, true);
 
                 }
 
                 _logger.ErrorLog(ex.Message, "Edit Database System", ex.InnerException.Message, userName);
-                return SystemSucceededTask.Failed("Edit {oldSystem.Name} unsuccessful", ex.InnerException.Message,false, true);
+                return SystemSucceededTask.Failed("Edit {oldSystem.Name} unsuccessful", ex.InnerException.Message,
+                    false, true);
             }
         }
 
