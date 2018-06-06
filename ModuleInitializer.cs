@@ -1,4 +1,5 @@
 ﻿using Itsomax.Data.Infrastructure;
+using Itsomax.Module.MonitorCore.Data;
 using Itsomax.Module.MonitorCore.Interfaces;
 using Itsomax.Module.MonitorCore.Services;
 using Microsoft.AspNetCore.Builder;
@@ -16,6 +17,7 @@ namespace Itsomax.Module.MonitorCore
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
 			serviceCollection.AddScoped<IMonitor, MonitorServices>();
+            serviceCollection.AddScoped<IMonitorCoreRepository, MonitorCoreRepository>();
         }
     }
 }
