@@ -370,11 +370,9 @@ namespace Itsomax.Module.MonitorCore.Services
             oldService.LoginName = model.LoginName;
             oldService.Name = model.Name;
             oldService.Named = model.Named;
-            if (model.LoginPassword == "ChangeMe".ToUpper())
-            {
-                oldService.LoginPassword = oldService.LoginPassword;
-            }
-            oldService.LoginPassword = _customRepository.SetEncryption(model.LoginPassword);
+            oldService.LoginPassword = model.LoginPassword == "ChangeMe".ToUpper()
+                ? oldService.LoginPassword
+                : _customRepository.SetEncryption(model.LoginPassword);
             oldService.UpdatedOn = DateTimeOffset.Now;
             
             try
