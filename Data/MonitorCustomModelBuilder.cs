@@ -11,9 +11,11 @@ namespace Itsomax.Module.MonitorCore.Data
         {
             modelBuilder.Entity<DatabaseSystem>(o =>
             {
-                o.HasOne(x => x.Vendor).WithMany(u => u.DatabaseSystem).HasForeignKey(x => x.VendorId);
+                o.HasOne(x => x.Vendor).WithMany(x => x.DatabaseSystem).HasForeignKey(x => x.VendorId);
                 o.HasOne(x => x.ConfigurationType).WithMany(x => x.DatabaseSystem)
                     .HasForeignKey(x => x.ConfigurationTypeId);
+                o.HasOne(x => x.DatabaseEnvironment).WithMany(x => x.DatabaseSystem)
+                    .HasForeignKey(x => x.DataBaseEnvironmentId);
             });
             modelBuilder.Entity<Service>(o =>
             {

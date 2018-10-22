@@ -45,6 +45,12 @@ namespace Itsomax.Module.MonitorCore.Data
                 new VendorConfiguration {VendorId = 4, ConfigurationTypeId = 7}
                 
             );
+            builder.Entity<DatabaseEnvironment>().HasData(
+                new DatabaseEnvironment(1) {DatabaseEnvironmentName = "Production"},
+                new DatabaseEnvironment(2) {DatabaseEnvironmentName = "Development"},
+                new DatabaseEnvironment(3) {DatabaseEnvironmentName = "Quality Assurance (QA)"},
+                new DatabaseEnvironment(4) {DatabaseEnvironmentName = "Staging"}
+            );
 
         }
     }

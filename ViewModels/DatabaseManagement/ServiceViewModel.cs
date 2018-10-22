@@ -26,6 +26,8 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         public bool Active { get; set; }
         [Required]
         public long DatabaseSystemId { get; set; }
+        [Required]
+        public long EnviromentId { get; set; }
     }
 
     public class EditServiceViewModel
@@ -54,6 +56,8 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         public bool Active { get; set; }
         [Required]
         public long DatabaseSystemId { get; set; }
+        [Required]
+        public long EnviromentId { get; set; }
     }
     
     public class ServiceListViewModel
