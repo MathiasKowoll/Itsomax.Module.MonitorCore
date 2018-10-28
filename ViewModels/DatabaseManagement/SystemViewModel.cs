@@ -14,6 +14,8 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         public long VendorId { get; set; }
         [Required]
         public long ConfigTypeId { get; set; }
+        [Required]
+        public long EnvironmentId { get; set; }
     }
     public class EditSystemViewModel
     {
@@ -30,6 +32,8 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         public long VendorId { get; set; }
         [Required]
         public long ConfigTypeId { get; set; }
+        [Required]
+        public long EnvironmentId { get; set; }
     }
     
     public class SystemListViewModel
@@ -40,5 +44,6 @@ namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
         public bool Active { get; set; }
         public string VendorName { get; set; }
         public string ConfigurationType { get; set; }
+        public string EnvironmentName { get; set; }
     }
 }
