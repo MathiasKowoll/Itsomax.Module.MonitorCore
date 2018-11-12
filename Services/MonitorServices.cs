@@ -22,11 +22,12 @@ namespace Itsomax.Module.MonitorCore.Services
         private readonly ILogginToDatabase _logger;
         private readonly ICustomRepositoryFunctions _customRepository;
         private readonly IMonitorCoreRepository _monitorCore;
+        private readonly IRepository<DatabaseEnvironment> _dataBaseEnvironment;
 
         public MonitorServices(IRepository<DatabaseSystem> systemRepository, ILogginToDatabase logger,
             IRepository<Vendor> vendorRepository,IRepository<Service> serviceRepositor
             ,IRepository<ConfigurationType>  configurationTypeRepository,ICustomRepositoryFunctions customRepository,
-            IMonitorCoreRepository monitorCore)
+            IMonitorCoreRepository monitorCore, IRepository<DatabaseEnvironment> dataBaseEnvironment)
         {
             _systemRepository = systemRepository;
             _logger = logger;
@@ -35,6 +36,7 @@ namespace Itsomax.Module.MonitorCore.Services
             _serviceRepository = serviceRepositor;
             _customRepository = customRepository;
             _monitorCore = monitorCore;
+            _dataBaseEnvironment = dataBaseEnvironment;
         }
 
         public async Task<SystemSucceededTask> CreateSystem(CreateSystemViewModel model, string userName)
@@ -51,7 +53,15 @@ namespace Itsomax.Module.MonitorCore.Services
             {
                 _logger.ErrorLog("Could not create system " + model.Name, "Create Database System", string.Empty,
                     userName);
-                return SystemSucceededTask.Failed("Could not create system {model.Name}, Please select a configuration",
+                return SystemSucceededTask.Failed("Could not create system {model.Name}, Please select a vendor",
+                    string.Empty, false, true);
+            }
+            
+            if (_dataBaseEnvironment.GetById(model.EnvironmentId) == null)
+            {
+                _logger.ErrorLog("Could not create system " + model.Name, "Create Database System", string.Empty,
+                    userName);
+                return SystemSucceededTask.Failed("Could not create system {model.Name}, Please select an rnvironment",
                     string.Empty, false, true);
             }
             try
@@ -62,7 +72,8 @@ namespace Itsomax.Module.MonitorCore.Services
                     Description = model.Description,
                     Active = model.Active,
                     ConfigurationType = _configurationTypeRepository.GetById(model.ConfigTypeId),
-                    Vendor = _vendorRepository.GetById(model.VendorId)
+                    Vendor = _vendorRepository.GetById(model.VendorId),
+                    DatabaseEnvironment = _dataBaseEnvironment.GetById(model.EnvironmentId)
                 };
 
                 _systemRepository.Add(dbSysten);
@@ -144,6 +155,18 @@ namespace Itsomax.Module.MonitorCore.Services
                 select new GenericSelectList {Id = item.Id, Name = item.Name, Selected = selected});
             return configList;
         }
+        
+        public IList<GenericSelectList> EnvironmentSelectList(long id)
+        {
+            var getConfigList = _dataBaseEnvironment.GetAll();
+            var configList = new List<GenericSelectList>();
+            if(_dataBaseEnvironment.GetById(id) == null )
+                configList.Add(new GenericSelectList {Id = 0,Name = "Select Configuration",Selected = true});
+            configList.AddRange(from item in getConfigList
+                let selected = _dataBaseEnvironment.GetById(id) != null
+                select new GenericSelectList {Id = item.Id, Name = item.DatabaseEnvironmentName, Selected = selected});
+            return configList;
+        }
 
         public IList<GenericSelectList> DatabaseSystemList(long id)
         {
@@ -199,6 +222,7 @@ namespace Itsomax.Module.MonitorCore.Services
                 oldSystem.Active = model.Active;
                 oldSystem.Vendor = _vendorRepository.GetById(model.VendorId);
                 oldSystem.ConfigurationType = _configurationTypeRepository.GetById(model.ConfigTypeId);
+                oldSystem.DatabaseEnvironment = _dataBaseEnvironment.GetById(model.EnvironmentId);
                 oldSystem.UpdatedOn = DateTimeOffset.Now;
                 
                 await _systemRepository.SaveChangesAsync();

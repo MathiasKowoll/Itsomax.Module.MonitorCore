@@ -57,6 +57,8 @@ namespace Itsomax.Module.MonitorCore.Data
                 (from dbs in Context.Set<DatabaseSystem>()
                     join v in Context.Set<Vendor>() on dbs.VendorId equals v.Id
                     join ct in Context.Set<ConfigurationType>() on dbs.ConfigurationTypeId equals ct.Id
+                    join de in Context.Set<DatabaseEnvironment>() on dbs.DataBaseEnvironmentId equals  de.Id into denv
+                    from de in denv.DefaultIfEmpty()
                     where dbs.Id == id
                     select new EditSystemViewModel
                     {
@@ -66,7 +68,8 @@ namespace Itsomax.Module.MonitorCore.Data
                         ConfigTypeId = ct.Id,
                         Description = dbs.Description,
                         Name = dbs.Name,
-                        VendorId = v.Id
+                        VendorId = v.Id,
+                        EnvironmentId  = dbs.DataBaseEnvironmentId ?? 0
                     }).SingleOrDefault();
         }
         
