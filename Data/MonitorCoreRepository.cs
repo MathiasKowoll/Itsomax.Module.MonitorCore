@@ -49,6 +49,7 @@ namespace Itsomax.Module.MonitorCore.Data
                     VendorName = v.Name
                 };
         }
+        
 
         public EditSystemViewModel GetSystemsEditViewModel(long id)
         {

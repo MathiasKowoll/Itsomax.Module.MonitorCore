@@ -24,7 +24,7 @@ namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
         public Vendor Vendor { get; set; }
         public long ConfigurationTypeId { get; set; }
         public ConfigurationType ConfigurationType { get; set; }
-        public long DataBaseEnvironmentId { get; set; }
+        public long? DataBaseEnvironmentId { get; set; }
         public DatabaseEnvironment DatabaseEnvironment { get; set; }
         public IList<Service> Service { get; set; } = new List<Service>();
         public DateTimeOffset CreatedOn { get; }
