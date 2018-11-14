@@ -13,7 +13,7 @@ namespace Itsomax.Module.MonitorCore.Data
         IList<GenericSelectList> GetConfigurationForVendor(long vendorId);
         IEnumerable<SystemListViewModel> GetSystemListViewModels();
         EditSystemViewModel GetSystemsEditViewModel(long id);
-        IEnumerable<ServiceListViewModel> GetServicesList();
+        IEnumerable<ServiceListViewModel> GetServicesList(long? id);
         EditServiceViewModel GetServiceForEdit(long id);
         Vendor GetVendorByName(string name);
     }

@@ -111,7 +111,7 @@ namespace Itsomax.Module.MonitorCore.Services
             catch (Exception ex)
             {
                 _logger.ErrorLog(ex.Message, "Get Database System by Id", ex.InnerException.Message, userName);
-                throw;
+                return null;
             }
         }
 
@@ -293,11 +293,26 @@ namespace Itsomax.Module.MonitorCore.Services
             }
         }
 
-        public IEnumerable<ServiceListViewModel> GetServicesList(string userName)
+        public IEnumerable<ServiceListViewModel> GetServicesList(long? systemId,string userName)
         {
+            if (systemId == null)
+            {
+                try
+                {
+                    var servicesList = _monitorCore.GetServicesList(null);
+                    _logger.InformationLog("Get Services List","Get Services List",string.Empty,userName);
+                    return servicesList;
+                }
+                catch (Exception ex)
+                {
+                    _logger.ErrorLog(ex.Message,"Get Services List",ex.InnerException.Message,userName);
+                    return null;
+                }
+            }
+            
             try
             {
-                var servicesList = _monitorCore.GetServicesList();
+                var servicesList = _monitorCore.GetServicesList(systemId);
                 _logger.InformationLog("Get Services List","Get Services List",string.Empty,userName);
                 return servicesList;
             }

@@ -39,6 +39,8 @@ namespace Itsomax.Module.MonitorCore.Data
                 from dbs in Context.Set<DatabaseSystem>()
                 join v in Context.Set<Vendor>() on dbs.VendorId equals v.Id
                 join ct in Context.Set<ConfigurationType>() on dbs.ConfigurationTypeId equals ct.Id
+                join de in Context.Set<DatabaseEnvironment>() on dbs.DataBaseEnvironmentId equals de.Id into des
+                from de in des.DefaultIfEmpty()
                 select new SystemListViewModel()
                 {
                     Id = dbs.Id,
@@ -46,7 +48,8 @@ namespace Itsomax.Module.MonitorCore.Data
                     ConfigurationType = ct.Name,
                     Description = dbs.Description,
                     Name = dbs.Name,
-                    VendorName = v.Name
+                    VendorName = v.Name,
+                    EnvironmentName = de.DatabaseEnvironmentName ?? "No Environment Assign"
                 };
         }
         
@@ -79,11 +82,28 @@ namespace Itsomax.Module.MonitorCore.Data
                 .FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
         }
 
-        public IEnumerable<ServiceListViewModel> GetServicesList()
+        public IEnumerable<ServiceListViewModel> GetServicesList(long? id)
         {
+
+            if (id == null)
+            {
+                return
+                    from s in Context.Set<Service>()
+                    join d in Context.Set<DatabaseSystem>() on s.DatabaseSystemId equals d.Id
+                    select new ServiceListViewModel
+                    {
+                        Id = s.Id,
+                        SystemName = d.Name,
+                        Name = s.Name,
+                        Hostname = s.Hostname,
+                        Active = s.Active,
+                        UpdatedOn = s.UpdatedOn.ToString("yyyy/MM/dd HH:mm:ss zz")
+                    };
+            }
             return
                 from s in Context.Set<Service>()
                 join d in Context.Set<DatabaseSystem>() on s.DatabaseSystemId equals d.Id
+                where d.Id == id.Value
                 select new ServiceListViewModel
                 {
                     Id = s.Id,
