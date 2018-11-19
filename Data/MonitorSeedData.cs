@@ -8,10 +8,10 @@ namespace Itsomax.Module.MonitorCore.Data
         public static void SeedData(ModelBuilder builder)
         {
             builder.Entity<Vendor>().HasData(
-                new Vendor(1) {Description = "Microsoft vendor for Sql Server", Name = "Sql Server"},
-                new Vendor(2) {Description = "EnterpriseDB Vender for Postgres", Name = "PosgreSQL"},
-                new Vendor(3) {Description = "SAP vendor for Sybase IQ", Name = "Sybase IQ"},
-                new Vendor(4) {Description = "Sap Vendor for Sybase ASE", Name = "Sybase Ase"}
+                new Vendor(1) {Description = "Microsoft vendor for Sql Server", Name = "Sql Server",Driver = "ODBC Driver 17 for SQL Server"},
+                new Vendor(2) {Description = "EnterpriseDB Vender for Postgres", Name = "PosgreSQL",Driver = "ODBC for PostgreSQL"},
+                new Vendor(3) {Description = "SAP vendor for Sybase IQ", Name = "Sybase IQ",Driver = "SQL Anywhere 17"},
+                new Vendor(4) {Description = "SAP Vendor for Sybase ASE", Name = "Sybase Ase",Driver = "Adaptive Server Enterprise"}
             );
             
             builder.Entity<ConfigurationType>().HasData(
