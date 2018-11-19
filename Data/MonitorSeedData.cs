@@ -9,7 +9,7 @@ namespace Itsomax.Module.MonitorCore.Data
         {
             builder.Entity<Vendor>().HasData(
                 new Vendor(1) {Description = "Microsoft vendor for Sql Server", Name = "Sql Server",Driver = "ODBC Driver 17 for SQL Server"},
-                new Vendor(2) {Description = "EnterpriseDB Vender for Postgres", Name = "PosgreSQL",Driver = "ODBC for PostgreSQL"},
+                new Vendor(2) {Description = "EnterpriseDB Vendor for Postgres", Name = "PostgreSQL",Driver = "ODBC for PostgreSQL"},
                 new Vendor(3) {Description = "SAP vendor for Sybase IQ", Name = "Sybase IQ",Driver = "SQL Anywhere 17"},
                 new Vendor(4) {Description = "SAP Vendor for Sybase ASE", Name = "Sybase Ase",Driver = "Adaptive Server Enterprise"}
             );
@@ -25,7 +25,7 @@ namespace Itsomax.Module.MonitorCore.Data
                 new ConfigurationType(4) {Description = "Transaction Replication for Sql Server",Name = "Transaction Log"},
                 new ConfigurationType(5) {Description = "Failover Cluster for Sql Server",Name = "Failover Cluster"},
                 new ConfigurationType(6) {Description = "Cluster active active all Databases",Name = "Cluster Active-Active"},
-                new ConfigurationType(7) {Description = "Cluster active pasive all Databases",Name = "Cluster Active-Pasive"}
+                new ConfigurationType(7) {Description = "Cluster active passive all Databases",Name = "Cluster Active-Passive"}
             );
 
             builder.Entity<VendorConfiguration>().HasData(
