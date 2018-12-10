@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Itsomax.Data.Infrastructure.Data;
+﻿using Itsomax.Data.Infrastructure.Data;
 using Itsomax.Module.MonitorCore.Entities;
 using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
+using Microsoft.EntityFrameworkCore;
 
 namespace Itsomax.Module.MonitorCore.Data
 {

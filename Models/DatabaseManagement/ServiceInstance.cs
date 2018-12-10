@@ -1,6 +1,6 @@
 ﻿using System;
-using Itsomax.Data.Infrastructure.Models;
 using System.ComponentModel.DataAnnotations;
+using Itsomax.Data.Infrastructure.Models;
 
 namespace Itsomax.Module.MonitorCore.Models.DatabaseManagement
 {

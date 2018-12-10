@@ -1,9 +1,9 @@
-﻿using Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Itsomax.Module.Core.Extensions;
 using Itsomax.Module.Core.ViewModels;
 using Itsomax.Module.MonitorCore.Models.DatabaseManagement;
+using Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement;
 
 namespace Itsomax.Module.MonitorCore.Interfaces
 {

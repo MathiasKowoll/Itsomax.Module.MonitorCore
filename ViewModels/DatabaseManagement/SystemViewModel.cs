@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+
 namespace Itsomax.Module.MonitorCore.ViewModels.DatabaseManagement
 {
     public class CreateSystemViewModel
