@@ -16,5 +16,8 @@ namespace Itsomax.Module.MonitorCore.Data
         IEnumerable<ServiceListViewModel> GetServicesList(long? id);
         EditServiceViewModel GetServiceForEdit(long id);
         Vendor GetVendorByName(string name);
+        bool IsSystemStandalone(long systemId);
+        IEnumerable<InstanceListViewModel> GetInstanceList(long? id);
+        EditInstanceViewModel GetInstanceForEdit(long id);
     }
 }

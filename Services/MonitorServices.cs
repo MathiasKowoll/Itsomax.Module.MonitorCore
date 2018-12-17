@@ -19,6 +19,7 @@ namespace Itsomax.Module.MonitorCore.Services
         private readonly IRepository<DatabaseSystem> _systemRepository;
         private readonly IRepository<Vendor> _vendorRepository;
         private readonly IRepository<Service> _serviceRepository;
+        private readonly IRepository<Instance> _instanceRepository;
         private readonly IRepository<ConfigurationType> _configurationTypeRepository;
         private readonly ILogginToDatabase _logger;
         private readonly ICustomRepositoryFunctions _customRepository;
@@ -28,7 +29,8 @@ namespace Itsomax.Module.MonitorCore.Services
         public MonitorServices(IRepository<DatabaseSystem> systemRepository, ILogginToDatabase logger,
             IRepository<Vendor> vendorRepository,IRepository<Service> serviceRepositor
             ,IRepository<ConfigurationType>  configurationTypeRepository,ICustomRepositoryFunctions customRepository,
-            IMonitorCoreRepository monitorCore, IRepository<DatabaseEnvironment> dataBaseEnvironment)
+            IMonitorCoreRepository monitorCore, IRepository<DatabaseEnvironment> dataBaseEnvironment,
+            IRepository<Instance> instanceRepository)
         {
             _systemRepository = systemRepository;
             _logger = logger;
@@ -38,6 +40,7 @@ namespace Itsomax.Module.MonitorCore.Services
             _customRepository = customRepository;
             _monitorCore = monitorCore;
             _dataBaseEnvironment = dataBaseEnvironment;
+            _instanceRepository = instanceRepository;
         }
 
         public async Task<SystemSucceededTask> CreateSystem(CreateSystemViewModel model, string userName)
@@ -115,6 +118,42 @@ namespace Itsomax.Module.MonitorCore.Services
                 return null;
             }
         }
+        
+        public Service GetServiceById(long id,string userName)
+        {
+            try
+            {
+                //var dbs = _systemRepository.GetById(id);
+                var service = _serviceRepository.GetById(id);
+                _logger.InformationLog("Get Service by Id Successfully", "Get Service by Id",
+                    string.Empty, userName);
+                return service;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex.Message, "Get Service by Id", ex.InnerException.Message, userName);
+                return null;
+            }
+        }
+        
+        public Instance GetInstanceById(long id,string userName)
+        {
+            try
+            {
+                //var dbs = _systemRepository.GetById(id);
+                var instance = _instanceRepository.GetById(id);
+                _logger.InformationLog("Get Service by Id Successfully", "Get Service by Id",
+                    string.Empty, userName);
+                return instance;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex.Message, "Get Service by Id", ex.InnerException.Message, userName);
+                return null;
+            }
+        }
 
         public IEnumerable<SystemListViewModel> GetSystemList(string userName)
         {
@@ -176,6 +215,18 @@ namespace Itsomax.Module.MonitorCore.Services
             if(_systemRepository.GetById(id) == null)
                 configList.Add(new GenericSelectList {Id = 0,Name = "Select Database System",Selected = true});
             configList.AddRange(from item in getSystemList
+                let selected = _systemRepository.GetById(id) != null
+                select new GenericSelectList {Id = item.Id,Name = item.Name, Selected = selected});
+            return configList;
+        }
+        
+        public IList<GenericSelectList> ServiceList(long id)
+        {
+            var getServiceList = _serviceRepository.GetAll();
+            var configList = new List<GenericSelectList>();
+            if(_serviceRepository.GetById(id) == null)
+                configList.Add(new GenericSelectList {Id = 0,Name = "Select Service",Selected = true});
+            configList.AddRange(from item in getServiceList
                 let selected = _systemRepository.GetById(id) != null
                 select new GenericSelectList {Id = item.Id,Name = item.Name, Selected = selected});
             return configList;
@@ -293,6 +344,59 @@ namespace Itsomax.Module.MonitorCore.Services
                 return false;
             }
         }
+        
+        public async Task<bool> DisableEnableService(long id,string userName)
+        {
+            try
+            {
+                var serviceEna = _serviceRepository.GetById(id);
+                if(serviceEna.Active)
+                {
+                    serviceEna.Active = false;
+                    await _serviceRepository.SaveChangesAsync();
+                    _logger.InformationLog("Disable instance: " + serviceEna.Name + " Successfully",
+                        "Disable System", string.Empty, userName);
+                    return true;
+                }
+
+                serviceEna.Active = true;
+                await _serviceRepository.SaveChangesAsync();
+                _logger.InformationLog("Enable instance: " + serviceEna.Name + " Successfully",
+                    "Enable instance", string.Empty, userName);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex.Message, "Enable/Disable instance", ex.InnerException.Message, userName);
+                return false;
+            }
+        }
+        public async Task<bool> DisableEnableInstance(long id,string userName)
+        {
+            try
+            {
+                var instanceEna = _instanceRepository.GetById(id);
+                if(instanceEna.Active)
+                {
+                    instanceEna.Active = false;
+                    await _instanceRepository.SaveChangesAsync();
+                    _logger.InformationLog("Disable instance: " + instanceEna.Name + " Successfully",
+                        "Disable System", string.Empty, userName);
+                    return true;
+                }
+
+                instanceEna.Active = true;
+                await _instanceRepository.SaveChangesAsync();
+                _logger.InformationLog("Enable instance: " + instanceEna.Name + " Successfully",
+                    "Enable instance", string.Empty, userName);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex.Message, "Enable/Disable instance", ex.InnerException.Message, userName);
+                return false;
+            }
+        }
 
         public IEnumerable<ServiceListViewModel> GetServicesList(long? systemId,string userName)
         {
@@ -314,6 +418,37 @@ namespace Itsomax.Module.MonitorCore.Services
             try
             {
                 var servicesList = _monitorCore.GetServicesList(systemId);
+                _logger.InformationLog("Get Services List","Get Services List",string.Empty,userName);
+                return servicesList;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorLog(ex.Message,"Get Services List",ex.InnerException.Message,userName);
+                return null;
+            }
+            
+        }
+        
+        public IEnumerable<InstanceListViewModel> GetInstanceList(long? systemId,string userName)
+        {
+            if (systemId == null)
+            {
+                try
+                {
+                    var servicesList = _monitorCore.GetInstanceList(null);
+                    _logger.InformationLog("Get Services List","Get Services List",string.Empty,userName);
+                    return servicesList;
+                }
+                catch (Exception ex)
+                {
+                    _logger.ErrorLog(ex.Message,"Get Services List",ex.InnerException.Message,userName);
+                    return null;
+                }
+            }
+            
+            try
+            {
+                var servicesList = _monitorCore.GetInstanceList(systemId);
                 _logger.InformationLog("Get Services List","Get Services List",string.Empty,userName);
                 return servicesList;
             }
@@ -363,6 +498,34 @@ namespace Itsomax.Module.MonitorCore.Services
             try
             {
                 await _serviceRepository.SaveChangesAsync();
+                try
+                {
+                    if (_monitorCore.IsSystemStandalone(model.DatabaseSystemId))
+                    {
+                        var newInstance = new Instance
+                        {
+                            Active = model.Active,
+                            ServiceId = newService.Id,
+                            Hostname = model.Hostname,
+                            Ip = model.Ip,
+                            LoginName = model.LoginName,
+                            Name = model.Name,
+                            Named = model.Named,
+                            LoginPassword = _customRepository.SetEncryption(model.LoginPassword)
+                        };
+                        _instanceRepository.Add(newInstance);
+                        await _instanceRepository.SaveChangesAsync();
+                        _logger.InformationLog("Service and Instance: " + model.Name + " created successfully", "Create Service",
+                            string.Empty, userName);
+                        return SystemSucceededTask.Success("Service and Instance: " + model.Name + " created successfully");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.InformationLog(ex.Message, "Create Service and instance",ex.InnerException.Message, userName);
+                    return SystemSucceededTask.Failed("Service and Instance: " + model.Name + " created unsuccessfully",
+                        ex.InnerException.Message, true, false);
+                }
                 _logger.InformationLog("Service: " + model.Name + " created successfully", "Create Service",
                     string.Empty, userName);
                 return SystemSucceededTask.Success("Service: " + model.Name + " created successfully");
@@ -370,6 +533,37 @@ namespace Itsomax.Module.MonitorCore.Services
             catch (Exception ex)
             {
                 _logger.InformationLog(ex.Message, "Create Service",ex.InnerException.Message, userName);
+                return SystemSucceededTask.Failed("Service: " + model.Name + " created unsuccessfully",
+                    ex.InnerException.Message, true, false);
+            }
+        }
+        
+        public async Task<SystemSucceededTask> CreateInstance(CreateInstanceViewModel model, string userName)
+        {
+            var newInstance = new Instance
+            {
+                Active = model.Active,
+                Service = _serviceRepository.GetById(model.ServiceId),
+                Hostname = model.Hostname,
+                Ip = model.Ip,
+                LoginName = model.LoginName,
+                Name = model.Name,
+                Named = model.Named,
+                LoginPassword = _customRepository.SetEncryption(model.LoginPassword)
+            };
+            _instanceRepository.Add(newInstance);
+            
+            try
+            {
+                await _instanceRepository.SaveChangesAsync();
+                _logger.InformationLog("Instance: " + model.Name + " created successfully", "Create Service",
+                    string.Empty, userName);
+                return SystemSucceededTask.Success("Instance: " + model.Name + " created successfully");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.InformationLog(ex.Message, "Create Instance",ex.InnerException.Message, userName);
                 return SystemSucceededTask.Failed("Service: " + model.Name + " created unsuccessfully",
                     ex.InnerException.Message, true, false);
             }
@@ -393,13 +587,31 @@ namespace Itsomax.Module.MonitorCore.Services
             
         }
         
+        public EditInstanceViewModel GetInstanceToEdit(long id,string userName)
+        {
+            try
+            {
+                var instance = _monitorCore.GetInstanceForEdit(id);
+                if (instance != null) return instance;
+                _logger.ErrorLog("Instance not found","Edit Instance",string.Empty,userName);
+                return null;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.InformationLog(ex.Message, "Edit Instance",ex.InnerException.Message, userName);
+                return null;
+            }
+            
+        }
+        
         public async Task<SystemSucceededTask> EditService(EditServiceViewModel model, string userName)
         {
             var oldService = _serviceRepository.GetById(model.Id);
             if (oldService == null)
             {
                 _logger.InformationLog("Service not found", "Edit Service",string.Empty, userName);
-                return SystemSucceededTask.Failed("Service: " + model.Name + " edited successful",
+                return SystemSucceededTask.Failed("Service: " + model.Name + " edited unsuccessful",
                     string.Empty, false, true);
             }
 
@@ -430,34 +642,43 @@ namespace Itsomax.Module.MonitorCore.Services
             }
         }
         
-        public bool DisableEnableService(long id,string userName)
+        public async Task<SystemSucceededTask> EditInstance(EditInstanceViewModel model, string userName)
         {
+            var oldInstance = _instanceRepository.GetById(model.Id);
+            if (oldInstance == null)
+            {
+                _logger.InformationLog("Instance not found", "Edit Instance",string.Empty, userName);
+                return SystemSucceededTask.Failed("Instance: " + model.Name + " edited unsuccessful",
+                    string.Empty, false, true);
+            }
+
+            oldInstance.Active = model.Active;
+            oldInstance.Service = _serviceRepository.GetById(model.ServiceId);
+            oldInstance.Hostname = model.Hostname;
+            oldInstance.Ip = model.Ip;
+            oldInstance.LoginName = model.LoginName;
+            oldInstance.Name = model.Name;
+            oldInstance.Named = model.Named;
+            oldInstance.LoginPassword = model.LoginPassword == "ChangeMe".ToUpper()
+                ? oldInstance.LoginPassword
+                : _customRepository.SetEncryption(model.LoginPassword);
+            oldInstance.UpdatedOn = DateTimeOffset.Now;
+            
             try
             {
-                var serviceEna = _serviceRepository.GetById(id);
-                if(serviceEna.Active)
-                {
-                    serviceEna.Active = false;
-                    _serviceRepository.SaveChangesAsync();
-                    _logger.InformationLog("Disable Service: " + serviceEna.Name + " Successfully",
-                        "Disable Service", string.Empty, userName);
-                    return true;
-                }
-                else
-                {
-                    serviceEna.Active = true;
-                    _serviceRepository.SaveChangesAsync();
-                    _logger.InformationLog("Enable Service: " + serviceEna.Name + " Successfully",
-                        "Enable Service", string.Empty, userName);
-                    return true;
-                }
+                await _instanceRepository.SaveChangesAsync();
+                _logger.InformationLog("Instance: " + model.Name + " edited successfully", "Edit Service",
+                    string.Empty, userName);
+                return SystemSucceededTask.Success("Instance: " + model.Name + " edited successfully");
             }
             catch (Exception ex)
             {
-                _logger.ErrorLog(ex.Message, "Enable/Disable Service", ex.InnerException.Message, userName);
-                return false;
+                _logger.InformationLog(ex.Message, "Edit Instance",ex.InnerException.Message, userName);
+                return SystemSucceededTask.Failed("Instance: " + model.Name + " edited successful",
+                    ex.InnerException.Message, true, false);
             }
         }
+        
 
     }
 }

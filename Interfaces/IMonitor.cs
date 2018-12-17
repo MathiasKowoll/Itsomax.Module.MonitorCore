@@ -26,6 +26,15 @@ namespace Itsomax.Module.MonitorCore.Interfaces
         Task<SystemSucceededTask> CreateService(CreateServiceViewModel model, string userName);
         Task<SystemSucceededTask> EditService(EditServiceViewModel model, string userName);
         EditServiceViewModel GetServiceToEdit(long id, string userName);
-        
+        Service GetServiceById(long id, string userName);
+        IEnumerable<InstanceListViewModel> GetInstanceList(long? systemId, string userName);
+        Task<SystemSucceededTask> CreateInstance(CreateInstanceViewModel model, string userName);
+        Task<SystemSucceededTask> EditInstance(EditInstanceViewModel model, string userName);
+        EditInstanceViewModel GetInstanceToEdit(long id, string userName);
+        IList<GenericSelectList> ServiceList(long id);
+        Task<bool> DisableEnableService(long id, string userName);
+        Task<bool> DisableEnableInstance(long id, string userName);
+        Instance GetInstanceById(long id, string userName);
+
     }
 }

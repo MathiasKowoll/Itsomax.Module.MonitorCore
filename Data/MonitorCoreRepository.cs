@@ -32,6 +32,15 @@ namespace Itsomax.Module.MonitorCore.Data
                     }).ToList();
             return list;
         }
+
+        public bool IsSystemStandalone(long systemId)
+        {
+            var list = (from s in Context.Set<DatabaseSystem>().Where(x => x.Id == systemId)
+                join c in Context.Set<ConfigurationType>().Where(x => x.Name == "Standalone") on s.ConfigurationTypeId
+                    equals c.Id
+                select c.Name).FirstOrDefault();
+            return list != null && list.Any();
+        }
         
         public IEnumerable<SystemListViewModel> GetSystemListViewModels()
         {
@@ -114,6 +123,43 @@ namespace Itsomax.Module.MonitorCore.Data
                     UpdatedOn = s.UpdatedOn.ToString("yyyy/MM/dd HH:mm:ss zz")
                 };
         }
+        
+        public IEnumerable<InstanceListViewModel> GetInstanceList(long? id)
+        {
+
+            if (id == null)
+            {
+                return
+                    from s in Context.Set<Service>()
+                    join d in Context.Set<DatabaseSystem>() on s.DatabaseSystemId equals d.Id
+                    join i in Context.Set<Instance>() on s.Id equals i.ServiceId
+                    select new InstanceListViewModel
+                    {
+                        Id = i.Id,
+                        SystemName = d.Name,
+                        ServiceName = s.Name,
+                        Name = i.Name,
+                        Hostname = i.Hostname,
+                        Active = i.Active,
+                        UpdatedOn = i.UpdatedOn.ToString("yyyy/MM/dd HH:mm:ss zz")
+                    };
+            }
+            return
+                from s in Context.Set<Service>()
+                join d in Context.Set<DatabaseSystem>() on s.DatabaseSystemId equals d.Id
+                join i in Context.Set<Instance>() on s.Id equals i.ServiceId
+                where s.Id == id.Value
+                select new InstanceListViewModel
+                {
+                    Id = i.Id,
+                    SystemName = d.Name,
+                    ServiceName = s.Name,
+                    Name = i.Name,
+                    Hostname = i.Hostname,
+                    Active = i.Active,
+                    UpdatedOn = i.UpdatedOn.ToString("yyyy/MM/dd HH:mm:ss zz")
+                };
+        }
 
         public EditServiceViewModel GetServiceForEdit(long id)
         {
@@ -131,6 +177,27 @@ namespace Itsomax.Module.MonitorCore.Data
                         LoginPassword = "ChangeMe".ToUpper(),
                         Name = s.Name,
                         Named = s.Named
+                    }).FirstOrDefault();
+
+
+        }
+        
+        public EditInstanceViewModel GetInstanceForEdit(long id)
+        {
+            return 
+                (from i in Context.Set<Instance>()
+                    where i.Id == id
+                    select new EditInstanceViewModel
+                    {
+                        Id = i.Id,
+                        ServiceId = i.ServiceId,
+                        Active = i.Active,
+                        Hostname = i.Hostname,
+                        Ip = i.Ip,
+                        LoginName = i.LoginName,
+                        LoginPassword = "ChangeMe".ToUpper(),
+                        Name = i.Name,
+                        Named = i.Named
                     }).FirstOrDefault();
 
 
