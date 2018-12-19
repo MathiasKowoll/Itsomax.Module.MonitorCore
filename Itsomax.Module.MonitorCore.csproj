@@ -5,4 +5,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Itsomax.Module.Core\Itsomax.Module.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\MonitoringTools" />
+  </ItemGroup>
 </Project>
